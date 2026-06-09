@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A model for turning repeated application security judgment into versioned enforcement artifacts that encode application-specific invariants and produce reviewable evidence." />
+    <title>Using Agentic Tooling to Build Application-Specific AppSec Controls | Steven Horton</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="../../assets/css/site.css" />
+  </head>
+  <body class="bg-stone-50 text-zinc-950 antialiased">
+    <header class="border-b border-zinc-200 bg-stone-50/90 backdrop-blur">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
+        <a href="../../" class="flex items-center gap-3">
+          <span class="grid size-9 place-items-center rounded-md border-2 border-zinc-950 font-black text-teal-700">S</span>
+          <span class="font-bold tracking-tight">Steven Horton</span>
+        </a>
+        <nav class="hidden items-center gap-6 text-sm font-medium text-zinc-600 md:flex">
+          <a class="hover:text-zinc-950" href="../../#whitepapers">Whitepapers</a>
+          <a class="hover:text-zinc-950" href="../../#systems">Systems</a>
+          <a class="hover:text-zinc-950" href="../../#resume">Resume</a>
+          <a class="hover:text-zinc-950" href="../../#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+<main>
+  <article class="mx-auto max-w-4xl px-5 py-12 sm:px-8 lg:py-16">
+    <p class="text-sm font-black uppercase tracking-wide text-red-700">June 8, 2026</p>
+    <h1 class="mt-4 text-5xl font-black leading-none tracking-normal text-zinc-950 sm:text-6xl">Using Agentic Tooling to Build Application-Specific AppSec Controls</h1>
+    <p class="mt-6 text-xl leading-8 text-zinc-700">A model for turning repeated application security judgment into versioned enforcement artifacts that encode application-specific invariants and produce reviewable evidence.</p>
+    <div class="mt-6 flex flex-wrap gap-2 text-sm font-bold text-zinc-600">
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">Proof-Driven AppSec</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">SAST</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">Evidence</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">AI Security</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">Agents</span>
+    </div>
+    <div class="mt-8 flex flex-wrap gap-3 text-sm font-bold">
+      <a class="rounded-md bg-zinc-950 px-5 py-3 text-white hover:bg-zinc-800" href="../../dist/whitepapers/application-specific-appsec-controls.pdf">Download PDF</a>
+      <a class="rounded-md border border-zinc-950 px-5 py-3 hover:bg-white" href="../../">Back to index</a>
+    </div>
+
+    <div class="paper-body mt-12">
+      <h1 id="using-agentic-tooling-to-build-application-specific-appsec-controls">Using Agentic Tooling to Build Application-Specific AppSec Controls</h1>
+<h2 id="abstract">Abstract</h2>
+<p>General-purpose application security tools are constrained by the assumptions they can safely make across many codebases. They can detect known vulnerability patterns, suspicious API usage, dependency exposure, and common misconfigurations. The local rules that make a particular application safe require a different kind of context. The tool needs to know which resources must be tenant-bound, which serializers are allowed to expose sensitive fields, which state transitions require audit records, which partner webhooks must verify signatures before parsing, and which dependency findings matter because the vulnerable path is actually reachable.</p>
+<p>Many of the most important application security failures involve application-specific invariants alongside universal vulnerability classes. These invariants often exist informally in code review memory, engineering convention, wiki pages, framework helpers, and senior developer judgment. They are too local for generic scanners to enforce by default, and historically they have been too expensive to encode as custom tooling for every application.</p>
+<p>Agentic tooling changes that cost model. A senior application security engineer, working with an AI-assisted development harness, can now inspect a codebase, identify repeated security-relevant patterns, propose local invariants, generate enforcement tools, create fixtures, test against known-good and known-bad paths, and integrate the resulting checks into CI or review workflows in days.</p>
+<p>This paper argues that application-specific AppSec controls belong between generic scanners and human review. In this model, the agent helps build enforcement artifacts while the security decision remains with the human reviewer. The output is a repository-owned static check, code generation rule, test harness, CI gate, review bot, or analyzer plugin that encodes a narrow invariant and produces reviewable evidence when the invariant is violated. The purpose is to convert repeated AppSec judgment into readable, repeatable, reliable controls while preserving human responsibility for the judgment itself.</p>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>Most AppSec programs use broad tools against failures that are specific to one system.</p>
+<p>The usual tools are designed for broad portability, while the application’s most important security rules are often specific to its ownership model, data model, workflow, and history.</p>
+<p>A scanner can know that raw SQL concatenation is dangerous, that a dependency has a published CVE, that a cookie should be <code>HttpOnly</code>, that secrets should stay out of source control, or that a route lacks an obvious authorization decorator. These checks are useful at the level of portable security knowledge.</p>
+<p>Real AppSec work often depends on application-specific context beneath those portable checks.</p>
+<p>An invoice should be loaded through an organization-scoped lookup. A customer-support export should omit internal notes unless the requester has a specific role. A webhook handler should verify the signature before parsing the body. A state transition from <code>draft</code> to <code>approved</code> should require a reviewer distinct from the author. A dependency finding should block release when the vulnerable symbol is reachable under the application’s runtime conditions.</p>
+<p>These application-specific rules form the security contract of the system.</p>
+<p>The difficulty is that this contract is usually implicit. It lives in how experienced engineers review code, how framework helpers are expected to be used, how services are organized, and how incidents have shaped local practice. When the contract is violated, the result may look like IDOR, mass assignment, sensitive data exposure, authorization bypass, audit failure, dependency exposure, or business logic abuse. The root failure is often more precise. The implementation stopped obeying a local invariant that the rest of the application quietly depends on.</p>
+<p>General-purpose scanners are poorly positioned to enforce these invariants because they lack permission to assume them. This application may require all invoice reads to pass through <code>Invoice.for_actor(actor)</code>. <code>AccountPublicSerializer</code> may be safe while <code>AccountSerializer</code> is internal-only. <code>verify_partner_signature()</code> may need to dominate parsing for a particular webhook family. The repository has to make those expectations visible before tooling can enforce them.</p>
+<p>Historically, custom enforcement of these rules was expensive. A team might write a few Semgrep rules, some CodeQL queries, or a custom script for the most painful recurring issue, but deep application-specific enforcement required expertise, program analysis skill, fixture design, and maintenance time. Most organizations could not justify building bespoke AppSec tooling for every local invariant.</p>
+<p>AI-assisted engineering changes the economics by making it practical to use agents as tooling accelerators. A prompt asking an LLM to “review the application” produces an answer that is difficult to audit and easy to lose. Agentic tooling aimed at local enforcement artifacts produces something the repository can keep, test, and improve.</p>
+<p>The agent helps read the codebase, compare sibling paths, identify repeated patterns, draft the invariant, generate the checker, produce tests, run the tool, explain false positives, and iterate. The human AppSec engineer remains responsible for judgment. The repository gets a control it can run again.</p>
+<p>The agent session should leave versioned repository tooling behind.</p>
+<h2 id="2-generic-scanners-and-local-invariants">2. Generic Scanners and Local Invariants</h2>
+<p>Generic scanners have to survive many codebases. That constraint shapes their behavior.</p>
+<p>They prefer patterns that are broadly meaningful. They look for dangerous functions, known APIs, dependency metadata, language-specific syntax, framework conventions, and common vulnerability signatures. This makes them valuable as a baseline layer. A security program without general SAST, dependency scanning, secret scanning, and basic configuration checks is leaving obvious coverage on the floor.</p>
+<p>But the same universality that makes generic tools deployable also limits what they can know.</p>
+<p>A generic scanner may recognize an ORM call and even recognize that a request parameter flows into a query. Correct scoping for this application’s ownership model requires local context. A scanner may detect a serializer that emits many fields. Audience-specific field policy has to be encoded somewhere before the tool can enforce it. A scanner may flag a dependency CVE. Reachability through the application’s real execution paths requires deeper application-specific analysis.</p>
+<p>That context is the difference between pattern detection and invariant enforcement. Vulnerability classes travel across applications, while invariants express the local rules a specific system depends on.</p>
+<p>Kern&rsquo;s description of Secure by Design at Google is the closest predecessor to
+this framing. Security posture emerges from the developer ecosystem, and
+important security properties should be stated as invariants for the system and
+its tooling to uphold
+(<a href="https://research.google/pubs/secure-by-design-at-google/">Kern, 2024</a>).</p>
+<p>For direct object references, the portable vulnerability class warns that authorization may be missing. The local invariant is more precise. Every route that reads or mutates tenant-owned invoices must bind actor, organization, and invoice before the first database effect, and the object used at the effect must be the bound object.</p>
+<p>For sensitive data exposure, the portable class warns that serializers can emit fields carelessly. The local invariant names the actual exposure policy. Public account responses may expose email and display name, but never recovery tokens, internal notes, fraud flags, password metadata, or encrypted seed material, regardless of serializer inheritance.</p>
+<p>For dependency risk, the portable class says that CVEs should be remediated. The local invariant describes when a finding blocks release. The vulnerable symbol must be reachable, the exploit preconditions must be satisfied, and attacker-controlled input must reach the vulnerable behavior under deployed configuration.</p>
+<p>Local invariants are what senior reviewers actually enforce. They are why two code paths that both “have authentication” can receive very different security judgments. They are why a critical CVE can be urgent in one service and documented risk in another. They are why the same serializer pattern can be harmless internally and dangerous on a public route.</p>
+<p>The argument of this paper is that agentic tooling makes these local invariants cheap enough to encode.</p>
+<h2 id="3-application-specific-appsec-controls">3. Application-Specific AppSec Controls</h2>
+<p>An application-specific AppSec control is a repository-owned enforcement mechanism for a local security invariant.</p>
+<p>The control might be a static rule, a framework-aware analyzer pass, a Semgrep or CodeQL query, a generated test, a CI gate, a review bot, a code generation constraint, or a repository linter. It might also be a migration checker, a serializer exposure inventory, a dependency reachability note generator, or a domain-specific rule embedded in the build. The mechanism is secondary. The control has to encode a local expectation and produce evidence when the expectation appears to drift.</p>
+<p>A good control has four parts.</p>
+<p>First, it has an invariant statement narrow enough to test. “Authorization should be good” is too broad to enforce, while “All organization invoice mutations must use an actor-scoped invoice lookup before mutation” gives the tool a concrete relationship to check.</p>
+<p>Second, it has positive examples. The control should know what compliant paths look like. These examples may be fixtures, real source spans, known-safe routes, or generated test cases.</p>
+<p>Third, it has negative examples. The control should be tested against intentionally violating paths, known historical bugs, or synthesized cases that demonstrate the failure mode.</p>
+<p>Fourth, it has a reviewable finding artifact. When the control fires, it should explain the route, actor source, resource lookup, effect, missing binding, comparable safe paths, and remaining uncertainty.</p>
+<p>These properties let a team turn repeated AppSec judgment into infrastructure. A valuable first control is narrow, explicit, testable, and reviewable. Perfection matters less than catching one high-value invariant violation with low noise. In practice, that local analyzer may be more useful than a general scanner that produces hundreds of findings no one trusts.</p>
+<h2 id="4-agentic-tooling-as-a-cost-curve-shift">4. Agentic Tooling as a Cost-Curve Shift</h2>
+<p>The main change is cost. Application-specific security enforcement has always been possible. A strong security engineer could read a codebase, learn its local rules, and write a custom checker. The limiting factor was cost, because custom analysis required time, tooling fluency, language expertise, framework knowledge, test design, and maintenance discipline. Agentic tooling lowers several of those costs at once.</p>
+<p>The agent can help map the codebase. It can identify route handlers, serializers, database access patterns, authorization helpers, and repeated naming conventions. It can compare sibling paths and surface repeated structures. It can draft a proposed invariant from examples. It can write the first version of a rule, generate fixtures, run the tool, inspect failures, revise the implementation, and document the result.</p>
+<p>The agent becomes useful without becoming authoritative. The human engineer still supplies judgment about which invariant matters, whether the examples are representative, whether the checker is overfitted, whether the false positives are acceptable, and whether the finding artifact proves what it claims. The agent supplies throughput.</p>
+<p>The distinction between agentic review and agentic tooling is durability. Agentic review asks a model to inspect code and produce an answer. Useful answers can still be ephemeral, difficult to regression test, and unlikely to improve the repository after the conversation ends.</p>
+<p>Agentic tooling asks a model to help create an enforcement artifact. The artifact stays in the repository. It can be tested, reviewed, versioned, tuned, and improved. It can run on every pull request, fail a build, warn a reviewer, generate a decision record, or attach evidence to a security ticket. The agent&rsquo;s most valuable contribution is the machinery that makes future human judgments cheaper.</p>
+<h2 id="5-the-enforcement-pipeline">5. The Enforcement Pipeline</h2>
+<p>A practical workflow for agentic invariant enforcement has seven stages.</p>
+<h3 id="51-observe">5.1 Observe</h3>
+<p>Start with what the code already does.</p>
+<p>The source may be a recurring review comment, a previous incident, a known bug class, a repeated framework convention, a scanner finding that requires human interpretation, or a senior engineer’s intuition that “this class of path should always do X before Y.”</p>
+<p>At this stage, the agent can help gather examples. It can search for similar routes, find naming patterns, identify helper usage, inspect call sites, and produce a rough map of how the application currently expresses the behavior.</p>
+<p>At this stage, the work product is evidence. The useful material is examples, counterexamples, helper names, call paths, and review notes that may later justify a rule.</p>
+<h3 id="52-state-the-invariant">5.2 State the invariant</h3>
+<p>The next step is to write the invariant plainly.</p>
+<p>A useful invariant should name the subject, the condition, the effect, and the required relationship.</p>
+<p>Examples follow.</p>
+<p>“Any route that mutates an invoice must load the invoice through an actor-and-organization-scoped query before the mutation.”</p>
+<p>“Any public serializer for account data must exclude recovery credentials, fraud flags, internal notes, and encrypted seed material.”</p>
+<p>“Any partner webhook handler must verify the request signature before parsing the body or performing any state-changing effect.”</p>
+<p>“Any critical dependency finding may be marked non-blocking only when the vulnerable symbol is unreachable or the exploit preconditions are unsatisfied under deployed configuration.”</p>
+<p>The invariant should be narrow enough that a tool can be wrong in understandable ways. If the rule is too broad, every violation becomes an argument. If the rule is narrow, violations become reviewable.</p>
+<h3 id="53-identify-evidence">5.3 Identify evidence</h3>
+<p>The agent should collect examples and counterexamples.</p>
+<p>Positive evidence includes compliant code paths, standard helpers, established service objects, safe serializers, accepted dependency review notes, or historical fixes.</p>
+<p>Negative evidence includes known bugs, synthetic violating fixtures, intentionally unsafe examples, or code paths that lack the expected structure.</p>
+<p>The key is to avoid relying on vibes. A local invariant becomes credible when it is supported by the application’s own repeated behavior.</p>
+<h3 id="54-generate-the-control">5.4 Generate the control</h3>
+<p>The control should be as simple as possible.</p>
+<p>Sometimes a Semgrep rule is enough. Sometimes a CodeQL query is appropriate. Sometimes the control should be a custom AST walker. Sometimes it should be a framework-aware analyzer that understands routes, middleware, serializers, and ORM calls. Sometimes it should be a generated test that asserts all routes in a family use the approved helper. Sometimes it should be a codegen constraint that makes the unsafe path difficult to express.</p>
+<p>The agent can draft multiple versions. The human should choose the one with the best maintenance profile.</p>
+<p>The design question should focus on the smallest enforcement artifact that catches the repeated failure with acceptable noise.</p>
+<h3 id="55-test-against-fixtures">5.5 Test against fixtures</h3>
+<p>A control without fixtures is just another opinion.</p>
+<p>Every application-specific AppSec control should include known-good and known-bad cases. Representative fixtures matter more than large fixtures.</p>
+<p>A tenant-boundary rule might include one safe route using the actor-scoped helper, one unsafe route using direct lookup, one route that loads through an intermediate service, and one intentionally unresolved dynamic case.</p>
+<p>A serializer exposure rule might include one public serializer, one internal serializer, one inherited serializer, and one serializer that exposes a banned field through a nested object.</p>
+<p>A dependency reachability control might include one reachable vulnerable symbol, one present-but-unreachable dependency, one configuration-gated path, and one unknown case that must be routed to the unresolved state.</p>
+<p>Fixtures are what make the control repeatable. They let the team change the rule without forgetting what it was supposed to protect.</p>
+<h3 id="56-produce-reviewable-findings">5.6 Produce reviewable findings</h3>
+<p>A finding should carry enough proof for a reviewer to understand and challenge it without reconstructing the entire path from scratch.</p>
+<p>For an authorization invariant, the finding should identify the route, externally controlled parameters, actor source, resource lookup, tenant or ownership binding, dangerous effect, and missing or weaker guard.</p>
+<p>For a serializer invariant, it should identify the route or caller, serializer, exposed field, field classification, audience, and policy expectation.</p>
+<p>For a dependency invariant, it should identify the package, vulnerable symbol, reachable call path if known, exploit preconditions, runtime configuration, and reason the finding is blocking, warning, accepted, or unresolved.</p>
+<p>The control should hand reviewers the smallest artifact that makes the issue inspectable, including the local facts that explain why this path matters in this application.</p>
+<h3 id="57-integrate-with-fail-warn-and-accept-modes">5.7 Integrate with fail, warn, and accept modes</h3>
+<p>Not every control should fail every build.</p>
+<p>Some invariant violations are release blockers. Some are warnings. Some require security review. Some are accepted risks with expiration dates. Unknowns should route to a human review state.</p>
+<p>A useful enforcement tool needs at least four states.</p>
+<p>Fail means the invariant violation is clear and the risk is unacceptable for merge or release.</p>
+<p>Warn means the path is suspicious, but the evidence is incomplete or the impact is limited.</p>
+<p>Accept means the risk is documented, time-bounded, and approved.</p>
+<p>Unresolved means the tool lacks enough evidence to prove compliance or violation, and the uncertainty itself is the output.</p>
+<p>Block-only AppSec tooling eventually gets bypassed, while tooling that distinguishes failure, warning, acceptance, and uncertainty can fit into normal engineering workflows.</p>
+<h2 id="6-example-invariant-families">6. Example Invariant Families</h2>
+<h3 id="61-tenant-boundary-invariants">6.1 Tenant boundary invariants</h3>
+<p>Tenant boundary failures are among the clearest examples of application-specific security risk.</p>
+<p>A generic scanner can look for direct object references. A local control can enforce the application’s actual ownership model.</p>
+<p>In one application, tenant binding may require <code>organization_id</code> to match a route parameter and a session claim. In another, it may require membership in a workspace. In another, it may require account hierarchy, reseller delegation, regional partition, or project-level permission. The invariant is local.</p>
+<p>A useful tenant-boundary control asks whether actor, tenant, and resource are bound before the first sensitive effect. Authentication establishes an actor. Authorization still has to connect that actor to the resource.</p>
+<p>A finding might say the following.</p>
+<p>The route accepts <code>invoice_id</code> from the request. The handler loads <code>Invoice.find(invoice_id)</code> directly. The current actor is available as <code>request.user</code>. Comparable invoice mutation routes use <code>Invoice.for_actor(request.user).for_org(org_id).find(invoice_id)</code>. This path reaches <code>invoice.update(...)</code> without evidence that the invoice belongs to the actor’s organization.</p>
+<p>That is the difference between a generic IDOR warning and an application-specific invariant finding.</p>
+<h3 id="62-serializer-exposure-invariants">6.2 Serializer exposure invariants</h3>
+<p>Serializer exposure is another local invariant family.</p>
+<p>Serializer exposure enforcement starts with an application decision about sensitive fields, permitted audiences, and serializer roles. The relevant roles may be public, internal, administrative, or partner-facing.</p>
+<p>An application-specific control can maintain a field exposure policy and compare serializers against it. It can detect direct exposure, inherited exposure, nested exposure, and accidental inclusion through broad model-shape serialization.</p>
+<p>The strongest version of this control models audience and transformation. A field may be safe for internal admin views and unsafe for customer-facing APIs. A field may be safe after transformation and unsafe in raw form. A field may be safe when redacted and unsafe when serialized directly.</p>
+<p>The finding artifact should show the serializer, the field, the audience, the route or caller, and the violated exposure expectation.</p>
+<h3 id="63-webhook-verification-invariants">6.3 Webhook verification invariants</h3>
+<p>Webhook handlers often have a strict local rule. Verify authenticity before trusting the body.</p>
+<p>A generic scanner has limited visibility into the difference between parsing, validation, signature verification, idempotency checks, and state-changing effects in a given framework. An application-specific control can encode the expected sequence.</p>
+<p>For a partner webhook family, the invariant might read as follows.</p>
+<p>Verify signature before parsing trusted fields. Validate event type before dispatch. Enforce idempotency before mutation. Log rejection without persisting attacker-controlled data.</p>
+<p>The control can inspect the handler’s call order, known verification helpers, parsing functions, dispatch paths, and mutation sinks. It can flag handlers that parse before verification, mutate before idempotency, or silently accept unknown event types.</p>
+<p>The control should enforce the application’s accepted webhook sequence.</p>
+<h3 id="64-state-transition-invariants">6.4 State transition invariants</h3>
+<p>Many security bugs are invalid state transitions.</p>
+<p>A reimbursement needs approval before moving from <code>submitted</code> to <code>paid</code>. A deployment needs review before moving from <code>draft</code> to <code>production</code>. A user needs an existing owner or break-glass path before becoming an organization owner. A document needs private attachments removed before becoming public.</p>
+<p>These rules belong to the product more than to any universal vulnerability taxonomy.</p>
+<p>A local control can model transition families and required preconditions. It can compare peer paths, identify missing review checks, detect audit omissions, and flag direct state assignments that bypass service-layer transitions.</p>
+<p>The finding should name the state transition, the effect, the expected preconditions, and the path that bypasses them.</p>
+<h3 id="65-dependency-reachability-invariants">6.5 Dependency reachability invariants</h3>
+<p>Dependency scanning produces too much raw material and not enough judgment.</p>
+<p>A critical CVE in a container image becomes a critical application risk through reachability and exploitability. It may be present but unreachable, require a configuration the application does not use, or be mitigated by sandboxing, runtime flags, or disabled features. It may also be fully reachable and urgent.</p>
+<p>The local invariant should require evidence-backed downgrades.</p>
+<p>A dependency finding can be downgraded only when reachability, exploit preconditions, runtime configuration, and compensating controls are documented with evidence.</p>
+<p>Agentic tooling can help here by generating reachability notes, scanning imports and call paths, checking container usage, reading configuration, and producing a structured decision artifact.</p>
+<p>The resulting control encodes the team’s dependency triage discipline in the repository so that reachability, exploitability, configuration, and compensating controls are reviewed consistently.</p>
+<h2 id="7-intent-markers-and-no-op-annotations">7. Intent Markers and No-Op Annotations</h2>
+<p>Application-specific controls become easier when developers can mark intent.</p>
+<p>An intent marker is a runtime-neutral annotation, decorator, attribute, structured comment, or metadata entry that states what security invariant a path is supposed to satisfy.</p>
+<p>The marker makes a security claim machine-readable without changing whether the implementation is actually secure.</p>
+<p>For example:</p>
+<pre><code class="language-python">@tenant_bound(resource=&quot;invoice&quot;, tenant=&quot;organization&quot;)
+@audit_required(effect=&quot;billing.mutation&quot;)
+def update_invoice(request, organization_id, invoice_id):
+    ...
+</code></pre>
+<p>The annotation may be a no-op at runtime. The enforcement tool reads it and asks whether the implementation satisfies the claim.</p>
+<p>Where is the actor loaded? Where is the tenant loaded? Where is the invoice loaded? Is the invoice lookup scoped to the actor and tenant? Does the object that was checked reach the mutation? Is an audit record written before or after the irreversible effect? Are unresolved dynamic calls recorded?</p>
+<p>The intent marker is an assertion that the enforcement tool must verify against the implementation.</p>
+<p>It lets developers declare what kind of review a path requires. It gives tools a stable surface to inspect. It reduces guesswork. It creates a bridge between human design intent and static enforcement. It can be adopted incrementally because no-op markers do not change runtime behavior.</p>
+<p>It also creates accountability. A handler marked <code>tenant_bound</code> that does not actually bind tenant and resource violates a stated local contract, which is more precise than a generic missing-best-practice warning.</p>
+<p>The broader principle is that application-specific security controls should support both inferred invariants and explicit developer-declared invariants, with verification applied to both.</p>
+<h2 id="8-proof-artifacts">8. Proof Artifacts</h2>
+<p>Application-specific controls must produce evidence because their authority comes from local reasoning. If a generic scanner flags <code>eval</code>, the reviewer already understands the broad danger. If a local invariant tool flags a tenant-boundary violation, the reviewer needs to know why the tool believes the path violates this application’s ownership model. Without that proof, the finding becomes backlog noise.</p>
+<p>A proof artifact should be small enough to review and complete enough to challenge.</p>
+<p>For a route-to-effect invariant, the artifact should name the route or entrypoint, request-controlled values, actor source, resource lookup, tenant or ownership binding, dangerous effect, missing or weaker guard, comparable safe paths when available, and source spans for every claim.</p>
+<p>For a serializer exposure invariant, the artifact should name the route or caller, serializer or response builder, field, field classification, audience, exposure policy, and the path by which the field reaches the response.</p>
+<p>For a dependency reachability invariant, the artifact should name the package and version, vulnerable symbol or behavior, known exploit preconditions, reachable application call paths if any, configuration evidence, compensating controls, and final triage state.</p>
+<p>Proof artifacts make agentic tooling usable in security workflows. The agent can help produce them, and each claim must remain inspectable through evidence.</p>
+<h2 id="9-failure-modes">9. Failure Modes</h2>
+<p>Application-specific enforcement can fail badly.</p>
+<p>The first failure mode is overfitting. A tool may encode today’s structure too tightly and reject legitimate future changes. This is especially likely when an agent learns from too few examples. The fix is to keep invariants narrow, include fixtures, and record unresolved cases honestly.</p>
+<p>The second failure mode is false authority. A generated control may look official because it runs in CI, even if its model is weak. The fix is to require proof artifacts and human review before treating a control as release-blocking.</p>
+<p>The third failure mode is noisy enforcement. If a local control produces too many weak findings, developers will route around it. The fix is to support fail, warn, accept, and unresolved states so different signal strengths receive different treatment.</p>
+<p>The fourth failure mode is hidden uncertainty. Dynamic dispatch, reflection, metaprogramming, framework magic, and unresolved imports can all hide relevant behavior. A good tool should emit unresolved evidence for unknown paths.</p>
+<p>The fifth failure mode is policy drift. An invariant may be correct when written and wrong six months later, so local controls need owners who can update them as the application and risk model change.</p>
+<p>The sixth failure mode is agent dependency. A generated tool has to be understandable and maintainable after the original agent session. The generated code must be readable, tested, documented, and versioned like any other security-critical artifact.</p>
+<h2 id="10-why-this-beats-generic-tools-on-local-risk">10. Why This Beats Generic Tools on Local Risk</h2>
+<p>Application-specific controls occupy a different layer from generic scanners.</p>
+<p>A generic scanner is better at broad baseline coverage. It can detect common dangerous APIs, known CVEs, secrets, insecure configuration, and framework anti-patterns across many repositories. It should remain part of the security stack.</p>
+<p>A local invariant tool is better at enforcing the rules that only make sense inside one application. A narrow local control can outperform a powerful general scanner on the invariant it encodes because it is allowed to know local helpers, field classifications, route structure, authorization models, serializer audiences, and risk acceptance rules.</p>
+<p>The point is not to replace scanners. It is to add the layer they cannot provide. A mature program uses generic tools for portable risk and application-specific controls for local drift. Generic tools create the baseline. Application-specific controls encode the lessons learned from incidents, reviews, false positives, architecture decisions, and repeated human judgment.</p>
+<p>High-value security automation often preserves what the team already learned the hard way and applies it consistently in future changes.</p>
+<h2 id="11-securesentry-as-a-verification-case">11. SecureSentry as a Verification Case</h2>
+<p>SecureSentry is the prototype that made this model concrete. It is a Sentry-aware
+static analyzer built to test whether application-specific invariants could be
+modeled against a large real application rather than a toy benchmark. Its output
+posture is explicit. Findings are source-backed review artifacts for human
+validation.</p>
+<p>The analyzer encodes narrow proof policies over Sentry-specific concepts. These
+include organization, project, and team boundaries, membership lifecycle, durable
+credential authority, external identity cleanup, service hook secrets, external
+storage cleanup, cross-service context export, internal proxy request steering,
+impersonation-sensitive mutation, and secondary-channel disclosure.</p>
+<p>This maps directly onto the enforcement pattern in this paper. A recurring
+review concern becomes a spec. The spec defines the local invariant, the semantic
+model, implementation slices, acceptance tests, and risk controls. The analyzer
+extracts facts such as ownership models, lifecycle markers, query shapes, object
+uses, boundary provenance, and proof gaps. The resulting review artifact names
+the missing proof and points to source-backed evidence.</p>
+<p>Several invariant packs illustrate the difference between generic scanning and
+local enforcement. The <code>OrganizationMember</code> live-invariant pack checks whether a
+role-bearing membership row is approved and live before it is treated as
+authority. The <code>ServiceHook</code> secret contract pack checks whether creator-known
+signing material survives creator removal without rotation, invalidation, or a
+documented owner-independent contract. The bulk lifecycle pack looks for bulk
+deletion of owner rows where per-instance cleanup may be the only proven
+external-storage cleanup path. The cross-service context export pack checks
+whether exported organization context has matching membership and authority proof
+and treats internal service boundaries as claims that need supporting evidence.</p>
+<p>The findings are therefore phrased as TP-shaped review candidates. For example,
+the EventAttachment finding identifies a row deletion path, a V1 blob cleanup
+path, and the proof needed to downgrade the concern. The Seer context finding
+identifies the membership lookup, exported organization/user context, and the
+missing approved/live membership proof. That format demonstrates the core claim
+of this paper in concrete form. Reviewable artifacts should make local security
+reasoning inspectable without asking the reviewer to trust an agent&rsquo;s final
+judgment.</p>
+<p>SecureSentry also shows how an invariant enforcement app matures. Early signals
+should be treated as candidates for review. The team runs them against code,
+commit history, fixtures, and real review examples, measures false positives,
+and refines the invariant until the finding shape is stable. Once a check has
+produced little to no false positives for long enough to earn trust, it can
+graduate from signal to lintable error. After that, it belongs in CI/CD, where
+the repository rejects regressions automatically and removes the need to
+rediscover the same local rule during every review.</p>
+<p>The graduation path depends on trust built over repeated runs. A good control
+should be run across many commits, especially older commits where the team
+already understands the expected risk shape. If the tool repeatedly finds the
+same meaningful proof gap without spurious noise, it becomes executable memory
+for the application&rsquo;s security model.</p>
+<p>SecureSentry also shows why agentic tooling matters. Building this kind of
+analyzer requires repeated movement from code reading to invariant writing to
+fact extraction to fixture design to finding review. Agentic tooling lowers the
+cost of that loop. The endpoint is a tested repository control that remembers a
+security judgment and produces evidence when the code drifts away from it.</p>
+<h2 id="12-implementation-blueprint">12. Implementation Blueprint</h2>
+<p>A team can start small.</p>
+<p>The first application-specific AppSec control should be narrow, painful, and repeated. It should come from a class of issues the team has already seen more than once.</p>
+<p>Good first candidates include tenant-scoped resource lookup, public serializer field exposure, webhook verification order, dependency reachability documentation, audit logging before irreversible effects, admin-only state transitions, unsafe direct use of request-controlled identifiers, or repeated suppressions from a generic scanner.</p>
+<p>The first implementation should prioritize proving the loop over elegance.</p>
+<p>Pick one invariant. Gather five safe examples and two unsafe examples. Ask the agent to summarize the repeated structure. Write the invariant in plain language. Generate a first checker. Add fixtures. Run it. Inspect false positives. Simplify. Add a proof artifact. Decide whether the control should fail, warn, or only report. Put it in CI or review.</p>
+<p>Start with one narrowly scoped control that catches one real class of repeated local security failure.</p>
+<p>Once that works, the pattern compounds. Each new invariant becomes easier because the repository now has a place for local controls, fixtures, documentation, and review decisions.</p>
+<p>Over time, the application accumulates a repository-local enforcement layer that reflects its own security model.</p>
+<h2 id="13-relationship-to-shift-left-security">13. Relationship to Shift-Left Security</h2>
+<p>Shift-left security often fails because it pushes responsibility left without moving enough judgment, context, or tooling left with it.</p>
+<p>Developers are told to own security while the security team remains the only group with enough context to make hard calls. This creates frustration on both sides. Developers receive scanner output they cannot interpret, security teams receive pull requests too late to influence architecture, and the decision machinery remains centralized even when everyone agrees security should happen earlier.</p>
+<p>Kern argues that developer ecosystems should take responsibility for ensuring
+key security properties. Application-specific controls are a
+repository-scale version of that idea. They move local security expectations
+into tools, fixtures, gates, and review artifacts that developers can actually
+use while building the system
+(<a href="https://research.google/pubs/secure-by-design-at-google/">Kern, 2024</a>).</p>
+<p>Application-specific controls make shift-left more concrete by giving developers narrow, inspectable security work products supported by local tooling.</p>
+<p>Instead of asking every developer to become broadly security-fluent, the program can assign narrow security lanes and support them with tools. One developer can own serializer exposure for a service. Another can own dependency reachability notes. Another can own tenant-boundary fixtures. Another can own converting repeated AppSec findings into local checks.</p>
+<p>The senior AppSec engineer still owns standards, review quality, escalation, and final judgment. The work product changes. The security team reviews artifacts and spends less time rediscovering every issue from scratch.</p>
+<p>This is where agentic tooling and Human Swarm Mode meet. AI compresses the learning loop for each lane, developers become useful narrow security operators, local controls turn their lane knowledge into enforcement, and expert review keeps the system honest.</p>
+<p>Distributed AppSec ownership becomes credible when it is grounded in artifacts.</p>
+<h2 id="14-conclusion">14. Conclusion</h2>
+<p>Application security needs both better generic scanners and cheaper custom enforcement.</p>
+<p>AI-assisted engineering makes it practical to build application-specific controls for the invariants that actually protect a system. Those invariants include tenant boundaries, actor-resource binding, serializer exposure, webhook verification, state transition rules, dependency reachability, audit requirements, and release-gate policy.</p>
+<p>The agent acts as a toolsmith, helping turn observed patterns and repeated review judgment into versioned enforcement artifacts.</p>
+<p>The human security engineer still decides what matters, while the repository gains machinery that can preserve and reapply those decisions.</p>
+<p>A mature AppSec program will use general-purpose tools for portable risk and local invariant tools for application-specific drift. Developers can work in narrow lanes with AI-assisted learning, local enforcement artifacts, and expert review.</p>
+<p>A security program that does this stops re-litigating the same review judgment in every pull request. It captures the judgment, tests it, and runs it.</p>
+<h2 id="references">References</h2>
+<p>Autor, D. H. (2024). <em>Applying AI to Rebuild Middle Class Jobs</em>. NBER Working Paper No. 32140. National Bureau of Economic Research.
+https://doi.org/10.3386/w32140</p>
+<p>Becker, G. S., &amp; Murphy, K. M. (1992). <em>The Division of Labor, Coordination Costs, and Knowledge</em>. The Quarterly Journal of Economics, 107(4), 1137–1160.
+https://doi.org/10.2307/2118383</p>
+<p>Braz, L., &amp; Bacchelli, A. (2022). <em>Software Security during Modern Code Review: The Developer’s Perspective</em>. arXiv:2208.04261.
+https://arxiv.org/abs/2208.04261</p>
+<p>Brynjolfsson, E., Li, D., &amp; Raymond, L. R. (2025). <em>Generative AI at Work</em>. The Quarterly Journal of Economics, 140(2), 889–942.
+https://doi.org/10.1093/qje/qjae044</p>
+<p>Dell’Acqua, F., McFowland III, E., Mollick, E. R., Lifshitz-Assaf, H., Kellogg, K. C., Rajendran, S., Krayer, L., Candelon, F., &amp; Lakhani, K. R. (2023). <em>Navigating the Jagged Technological Frontier: Field Experimental Evidence of the Effects of Artificial Intelligence on Knowledge Worker Productivity and Quality</em>. Harvard Business School Working Paper No. 24-013.
+https://www.hbs.edu/faculty/Pages/item.aspx?num=64700</p>
+<p>Kern, C. (2024). <em>Secure by Design at Google</em>. Google Security Engineering Whitepaper.
+https://research.google/pubs/secure-by-design-at-google/</p>
+<p>Peng, S., Kalliamvakou, E., Cihon, P., &amp; Demirer, M. (2023). <em>The Impact of AI on Developer Productivity: Evidence from GitHub Copilot</em>. arXiv:2302.06590.
+https://arxiv.org/abs/2302.06590</p>
+<p>Rajapakse, R. N., Zahedi, M., Babar, M. A., &amp; Shen, H. (2021). <em>Challenges and Solutions when Adopting DevSecOps: A Systematic Review</em>. arXiv:2103.08266.
+https://arxiv.org/abs/2103.08266</p>
+<p>Rajapakse, R. N., Zahedi, M., &amp; Babar, M. A. (2022). <em>Collaborative Application Security Testing for DevSecOps: An Empirical Analysis of Challenges, Best Practices and Tool Support</em>. arXiv:2211.06953.
+https://arxiv.org/abs/2211.06953</p>
+    </div>
+  </article>
+</main>
+  </body>
+</html>

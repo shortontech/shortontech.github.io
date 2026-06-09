@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+
+{% block body %}
+<main>
+  <article class="mx-auto max-w-4xl px-5 py-12 sm:px-8 lg:py-16">
+    <p class="text-sm font-black uppercase tracking-wide text-red-700">{{ paper.display_date }}</p>
+    <h1 class="mt-4 text-5xl font-black leading-none tracking-normal text-zinc-950 sm:text-6xl">{{ paper.title }}</h1>
+    <p class="mt-6 text-xl leading-8 text-zinc-700">{{ paper.summary }}</p>
+    <div class="mt-6 flex flex-wrap gap-2 text-sm font-bold text-zinc-600">
+      {% for tag in paper.tag_items %}
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">{{ tag.label }}</span>
+      {% endfor %}
+    </div>
+    <div class="mt-8 flex flex-wrap gap-3 text-sm font-bold">
+      <a class="rounded-md bg-zinc-950 px-5 py-3 text-white hover:bg-zinc-800" href="../../dist/whitepapers/{{ paper.slug }}.pdf">Download PDF</a>
+      <a class="rounded-md border border-zinc-950 px-5 py-3 hover:bg-white" href="../../">Back to index</a>
+    </div>
+
+    <div class="paper-body mt-12">
+      {{ content_html|safe }}
+    </div>
+  </article>
+</main>
+{% endblock %}

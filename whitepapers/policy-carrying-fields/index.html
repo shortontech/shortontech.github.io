@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="An argument for making security intent concrete on ordinary ORM fields, then using generated metadata and static analysis to enforce local invariants." />
+    <title>Policy-Carrying Fields for Application-Specific Security Tooling | Steven Horton</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="../../assets/css/site.css" />
+  </head>
+  <body class="bg-stone-50 text-zinc-950 antialiased">
+    <header class="border-b border-zinc-200 bg-stone-50/90 backdrop-blur">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
+        <a href="../../" class="flex items-center gap-3">
+          <span class="grid size-9 place-items-center rounded-md border-2 border-zinc-950 font-black text-teal-700">S</span>
+          <span class="font-bold tracking-tight">Steven Horton</span>
+        </a>
+        <nav class="hidden items-center gap-6 text-sm font-medium text-zinc-600 md:flex">
+          <a class="hover:text-zinc-950" href="../../#whitepapers">Whitepapers</a>
+          <a class="hover:text-zinc-950" href="../../#systems">Systems</a>
+          <a class="hover:text-zinc-950" href="../../#resume">Resume</a>
+          <a class="hover:text-zinc-950" href="../../#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+<main>
+  <article class="mx-auto max-w-4xl px-5 py-12 sm:px-8 lg:py-16">
+    <p class="text-sm font-black uppercase tracking-wide text-red-700">June 8, 2026</p>
+    <h1 class="mt-4 text-5xl font-black leading-none tracking-normal text-zinc-950 sm:text-6xl">Policy-Carrying Fields for Application-Specific Security Tooling</h1>
+    <p class="mt-6 text-xl leading-8 text-zinc-700">An argument for making security intent concrete on ordinary ORM fields, then using generated metadata and static analysis to enforce local invariants.</p>
+    <div class="mt-6 flex flex-wrap gap-2 text-sm font-bold text-zinc-600">
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">Proof-Driven AppSec</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">Secure Codegen</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">Authorization</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">Evidence</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">SAST</span>
+    </div>
+    <div class="mt-8 flex flex-wrap gap-3 text-sm font-bold">
+      <a class="rounded-md bg-zinc-950 px-5 py-3 text-white hover:bg-zinc-800" href="../../dist/whitepapers/policy-carrying-fields.pdf">Download PDF</a>
+      <a class="rounded-md border border-zinc-950 px-5 py-3 hover:bg-white" href="../../">Back to index</a>
+    </div>
+
+    <div class="paper-body mt-12">
+      <h1 id="policy-carrying-fields-for-application-specific-security-tooling">Policy-Carrying Fields for Application-Specific Security Tooling</h1>
+<h2 id="abstract">Abstract</h2>
+<p>Many security failures happen because code loses track of what a field means. A patient diagnosis is not just text. A webhook secret is not just a string. An internal risk flag is not just a boolean. These fields carry policy. They define who may see the value, who may mutate it, where it may be serialized, whether it may enter logs, and which review evidence is required when the field crosses a boundary.</p>
+<p>Most applications already have a place where this meaning can live. They do not need a new ORM. They need policy metadata on the ORM or schema layer they already use, plus tooling that can read that metadata and enforce local invariants.</p>
+<p>This paper argues for policy-carrying fields as a practical foundation for application-specific security tooling. A field annotation makes intent concrete. Generated metadata makes the intent inspectable. Static analysis connects the field to serializers, routes, services, tasks, logs, and mutation paths. AI-assisted tooling lowers the cost of writing the invariant checks, but the security decision remains grounded in generated metadata and reviewable evidence.</p>
+<p>The motivating implementation pattern is ordinary model code with explicit policy metadata. Put policy where the application defines data, carry it into generated metadata, and let enforcement tools verify that code paths obey it. The main argument applies to existing model-based ORMs such as Django.</p>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>Security intent is often discussed in review comments and forgotten in code.</p>
+<p>A reviewer says a field should never appear in logs. Another reviewer says a field should be visible to support staff and hidden from customers. A product decision says physicians may edit a treatment plan only under an active care relationship. A privacy decision says an internal risk score may exist in the database and stay out of public APIs.</p>
+<p>Those rules are specific, local, and enforceable. The problem is that they are usually written outside the code path that moves the data.</p>
+<p>Generic scanners can detect common dangerous APIs and familiar vulnerability classes. They are much weaker at understanding that this application treats one field as physician-visible PHI, another as staff-only operational metadata, and another as safe for redacted logging. The missing layer is a machine-readable declaration of field meaning.</p>
+<p>Policy-carrying fields provide that layer. The field definition stays inside the ordinary schema or ORM system. The application continues to use its normal model layer. The difference is that fields carry annotations the toolchain can inspect.</p>
+<p>In healthcare, that might mean a field is marked as PHI, physician-visible, nurse-visible, patient-visible, log-redacted, never-log, audit-required, or mutation-restricted. In fintech, the same pattern might apply to account numbers, transaction metadata, sanctions screening results, fraud flags, and internal risk reasons. The domain changes. The mechanism stays the same.</p>
+<h2 id="2-add-policy-to-the-existing-orm">2. Add Policy to the Existing ORM</h2>
+<p>The practical version of this idea does not replace the ORM. It adds policy to the ORM surface the application already trusts.</p>
+<p>In Django, Flask-SQLAlchemy, Rails, and similar frameworks, that surface is usually the model definition. The model already defines field type, nullability, relationships, indexes, defaults, and validation hints. Policy metadata belongs beside those properties because the field is where the application gives data its durable shape.</p>
+<p>The shape is simple. A normal Django model field can be wrapped by a policy-aware field class or extended with metadata the application already expects tooling to understand.</p>
+<pre><code class="language-python">class PatientNote(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+
+    diagnosis = PolicyTextField(
+        policy=[PHI, PhysicianSees, LogRedacted],
+    )
+
+    treatment_plan = PolicyTextField(
+        policy=[PHI, PhysicianSees, PhysicianMutates, AuditRequired],
+    )
+
+    internal_risk_flag = PolicyCharField(
+        max_length=64,
+        null=True,
+        policy=[StaffOnly, NeverLog],
+    )
+</code></pre>
+<p>This is not a new persistence model. The application still reads and writes normal model objects. The annotations give tools enough information to ask whether access, mutation, serialization, and logging paths respect the declared policy.</p>
+<p>The field class can expose metadata to static analyzers, serializers, logging checks, test fixtures, and CI rules. In Django, the metadata can live on the field object, in <code>Meta</code>, in a companion registry, or in generated model metadata. The exact storage mechanism matters less than making the policy inspectable from the same model surface developers already use.</p>
+<p>The important lesson is that model-level field policy can become executable security infrastructure when the analyzer understands it.</p>
+<h2 id="3-intent-becomes-concrete">3. Intent Becomes Concrete</h2>
+<p>Field annotations are not proof. They are claims the system can inspect.</p>
+<p>That distinction matters. A field marked <code>NeverLog</code> may still be logged by a careless code path. A field marked <code>PhysicianMutates</code> may still be modified through an unguarded service. A field marked <code>OwnerSees</code> may still leak through an overly broad serializer. The annotation does not make the implementation safe. It gives enforcement tooling a concrete claim to verify.</p>
+<p>Without the annotation, the reviewer has to infer policy from naming, domain memory, and nearby code. With the annotation, the question becomes sharper. Does this field enter a log sink. Does this serializer include a field the audience cannot see. Does this mutation path prove the actor has the required relationship. Does this query scope bind the patient, physician, and care context before the sensitive effect.</p>
+<p>The annotation turns review intent into a stable surface. The analyzer can read it repeatedly. The test suite can fixture it. CI can enforce it after the check has earned trust. A human reviewer can inspect the generated evidence and challenge the reasoning.</p>
+<p>For healthcare, the field is often the correct level of precision. A model may contain PHI and non-PHI. It may contain data visible to patients, physicians, billing staff, and internal reviewers. It may contain fields that can be logged after redaction and fields that should never be logged at all. Model-level traits are useful for broad categories, but field-level annotations capture the policy that decides where data may flow.</p>
+<h2 id="4-the-compiler-shape">4. The Compiler Shape</h2>
+<p>Application-specific security tooling does not need mystical analysis. Much of the work is ordinary compiler and graph work applied to application code.</p>
+<p>The analyzer reads the schema or model layer and extracts policy-bearing fields. It reads routes, handlers, service methods, serializers, background jobs, logging calls, and mutation sinks. It builds facts about where fields are loaded, transformed, checked, serialized, logged, or written. Then it connects those facts into a graph that can be queried.</p>
+<p>Tarjan&rsquo;s algorithm is a useful example because real applications are not clean trees. Service methods call helpers, helpers call other services, serializers call methods, and framework hooks create cycles. Strongly connected components let the analyzer collapse cyclic regions of the call graph into units it can reason about. The result is not perfect understanding. It is a tractable structure for asking local questions.</p>
+<p>For a <code>NeverLog</code> field, the question is whether any path from the field reaches a logging sink without an approved suppression or redaction step. For a <code>LogRedacted</code> field, the question is whether the path passes through an approved redaction helper before logging. For a <code>PhysicianMutates</code> field, the question is whether a mutation path has evidence of active treatment relationship, write-scoped role, and audit emission before the write.</p>
+<p>AI helps because building these analyzers is repetitive. It can draft the AST extractor, generate graph fixtures, implement the first query, inspect false positives, and turn examples into tests. The useful endpoint is still a versioned control the repository can run again.</p>
+<h2 id="5-logging-is-the-hard-test">5. Logging Is the Hard Test</h2>
+<p>Logging is a good test for policy-carrying fields because logging often defeats vague security intent.</p>
+<p>Developers rarely intend to leak sensitive data. They log request objects, error contexts, event payloads, serializer outputs, model snapshots, and diagnostic maps because the system is failing and they need evidence. If field policy is stored only in a wiki page, logging paths will drift. If the policy is carried by the field, tooling can inspect whether the field reaches a log sink.</p>
+<p>The enforcement rule can be narrow. Fields marked <code>NeverLog</code> may not reach logging sinks. Fields marked <code>LogRedacted</code> may reach logging sinks only through approved redaction helpers. Fields marked <code>LogAllowed</code> may be logged directly, with the finding artifact still showing the path.</p>
+<p>This is where application-specific controls beat generic scanners. A generic scanner can warn about logging a variable named <code>password</code> or <code>token</code>. A local invariant checker can know that <code>diagnosis</code>, <code>internal_risk_flag</code>, <code>recovery_context</code>, or <code>payer_denial_reason</code> carries a specific policy even when the name is not obviously sensitive to a universal tool.</p>
+<p>The artifact should be reviewable. It should name the field, the declared policy, the source path, the sink, the transformations seen on the path, and the missing proof. The reviewer should not have to trust a model&rsquo;s summary. The claim should terminate in source-backed evidence.</p>
+<h2 id="6-generated-metadata-as-a-concrete-pattern">6. Generated Metadata as a Concrete Pattern</h2>
+<p>The model annotation is only the beginning. The useful control comes from carrying the field policy into generated metadata that analyzers can read consistently.</p>
+<p>In a Django-style implementation, each policy-bearing field can expose metadata describing visibility, mutation authority, logging behavior, serialization audience, audit requirements, and storage requirements. A checker can read that metadata directly from the model layer and compare it against serializers, log sinks, query scopes, and mutation paths.</p>
+<p>Generated metadata gives security tooling a stable place to stand. A sensitive field routed into a public serializer can be flagged. A field marked <code>NeverLog</code> can be traced toward logging sinks. A field marked <code>PhysicianMutates</code> can require evidence of relationship, role, workflow, and audit before a write path is accepted.</p>
+<p>The healthcare extension is a natural next step. A model field can declare healthcare-specific policy such as PHI, physician visibility, mutation authority, log redaction, audit requirements, and patient-facing serialization. The generated model metadata carries those policies forward. Static analysis then checks whether application code respects them.</p>
+<p>Pickle is a useful reference point because it already treats schema declarations as the source of generated model metadata, response types, serialization helpers, ownership scopes, and visibility maps. Its migration annotations are one way to provide a faithful policy surface. The same idea can be applied to an existing ORM by augmenting normal model fields rather than replacing the model layer.</p>
+<h2 id="7-failure-modes">7. Failure Modes</h2>
+<p>Policy-carrying fields can fail if the annotations become decoration.</p>
+<p>The first failure mode is assertion without verification. A field marked <code>NeverLog</code> means little if no tool checks logging paths. The annotation has to feed a checker, a fixture, a review artifact, or a CI gate.</p>
+<p>The second failure mode is policy drift. A field may start as staff-only and later become safe for patient-facing export. Another field may start as safe for logs and later become sensitive after product changes. Annotations need owners, review history, and tests.</p>
+<p>The third failure mode is broad annotation vocabulary. If every team invents twenty overlapping labels, the tool cannot enforce them consistently. The first vocabulary should be small. It should focus on visibility, mutation authority, logging, serialization audience, encryption, and audit.</p>
+<p>The fourth failure mode is false precision. A field-level policy is precise, but field flow is still hard. Dynamic dispatch, reflection, framework callbacks, and serialization helpers can hide paths. A useful tool reports unresolved evidence when it cannot prove safety.</p>
+<p>The fifth failure mode is treating AI output as proof. AI can help write the checker, but the checker has to run against source, produce evidence, and survive review without the original agent session.</p>
+<h2 id="8-implementation-sketch">8. Implementation Sketch</h2>
+<p>Start with one policy family.</p>
+<p>For healthcare, logging is a strong pilot. Add <code>NeverLog</code>, <code>LogRedacted</code>, and <code>LogAllowed</code> to a small set of fields that already cause review concern. Generate metadata from the schema layer. Write a checker that follows those fields into serializers, event payloads, error contexts, and logging calls. Treat early findings as review candidates.</p>
+<p>Once the logging check produces low noise, add visibility. Fields can declare physician-visible, patient-visible, support-visible, or staff-only policy. The checker can compare field policy against serializers and query scopes. The finding artifact should show the field, audience, serializer or route, and missing proof.</p>
+<p>Mutation authority should come later. It is usually harder than visibility because it depends on actor state, relationship, workflow, and audit. A <code>PhysicianMutates</code> field should require evidence of active treatment relationship, write-scoped role, and audit emission. The first checker should be narrow enough that reviewers can understand every finding.</p>
+<p>The final step is promotion. Signals become warnings after the team understands the false positives. Warnings become lintable errors after the check repeatedly finds real drift. CI enforcement should come only after the control has been run across enough code and history to earn trust.</p>
+<h2 id="9-conclusion">9. Conclusion</h2>
+<p>Application-specific security tooling gets stronger when applications make their own policy visible.</p>
+<p>Field annotations are a practical way to do that. They attach security meaning to ordinary schema fields, allow generated code to retain that meaning, and give analyzers a stable surface for enforcement. In domains such as healthcare, where field-level meaning determines visibility, mutation authority, logging safety, and audit requirements, that precision matters.</p>
+<p>The shape is straightforward. Put policy on the model or schema surface. Generate metadata from it. Use static analysis to connect field policy to code paths. Use AI to lower the cost of writing and refining the enforcement checks. Keep the final authority in reviewable artifacts, tests, and repository-owned controls.</p>
+<p>The result is not a new ORM. It is a way to make the ORM the application already uses carry enough security intent for tooling to enforce the rules that matter locally.</p>
+    </div>
+  </article>
+</main>
+  </body>
+</html>

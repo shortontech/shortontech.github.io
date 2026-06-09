@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A model for using AI to create more white-collar technical workers, not fewer, by pairing expert command with narrow problem lanes, artifact discipline, and readable, repeatable, reliable work." />
+    <title>Human Swarm Mode | Steven Horton</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="../../assets/css/site.css" />
+  </head>
+  <body class="bg-stone-50 text-zinc-950 antialiased">
+    <header class="border-b border-zinc-200 bg-stone-50/90 backdrop-blur">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
+        <a href="../../" class="flex items-center gap-3">
+          <span class="grid size-9 place-items-center rounded-md border-2 border-zinc-950 font-black text-teal-700">S</span>
+          <span class="font-bold tracking-tight">Steven Horton</span>
+        </a>
+        <nav class="hidden items-center gap-6 text-sm font-medium text-zinc-600 md:flex">
+          <a class="hover:text-zinc-950" href="../../#whitepapers">Whitepapers</a>
+          <a class="hover:text-zinc-950" href="../../#systems">Systems</a>
+          <a class="hover:text-zinc-950" href="../../#resume">Resume</a>
+          <a class="hover:text-zinc-950" href="../../#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+<main>
+  <article class="mx-auto max-w-4xl px-5 py-12 sm:px-8 lg:py-16">
+    <p class="text-sm font-black uppercase tracking-wide text-red-700">June 8, 2026</p>
+    <h1 class="mt-4 text-5xl font-black leading-none tracking-normal text-zinc-950 sm:text-6xl">Human Swarm Mode</h1>
+    <p class="mt-6 text-xl leading-8 text-zinc-700">A model for using AI to create more white-collar technical workers, not fewer, by pairing expert command with narrow problem lanes, artifact discipline, and readable, repeatable, reliable work.</p>
+    <div class="mt-6 flex flex-wrap gap-2 text-sm font-bold text-zinc-600">
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">AI Labor</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">Research Ops</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">Industrial Capacity</span>
+      <span class="rounded-full border border-zinc-300 bg-white px-3 py-2">Workforce Development</span>
+    </div>
+    <div class="mt-8 flex flex-wrap gap-3 text-sm font-bold">
+      <a class="rounded-md bg-zinc-950 px-5 py-3 text-white hover:bg-zinc-800" href="../../dist/whitepapers/human-swarm-mode.pdf">Download PDF</a>
+      <a class="rounded-md border border-zinc-950 px-5 py-3 hover:bg-white" href="../../">Back to index</a>
+    </div>
+
+    <div class="paper-body mt-12">
+      <h1 id="human-swarm-mode">Human Swarm Mode</h1>
+<h2 id="abstract">Abstract</h2>
+<p>Human Swarm Mode is an operating model for AI-assisted technical work in which
+senior experts decompose complex research and engineering problems into narrow
+lanes that can be learned, documented, and reviewed by nontraditional operators.
+The model treats AI as learning and work infrastructure rather than as an
+autonomous replacement for expertise. Its purpose is to increase technical
+throughput by pairing expert direction with artifact-based review, practical
+selection, and disciplined feedback loops.</p>
+<p>The argument is not that credentials, deep expertise, or formal education are no
+longer valuable. It is that many applied technical bottlenecks can be advanced
+by operators who become competent in bounded problem lanes under expert
+supervision. If their work is readable, repeatable, and reliable, organizations
+can expand the population capable of useful white-collar technical contribution
+instead of merely automating existing roles away.</p>
+<p>Human Swarm Mode can be understood as AI-native apprenticeship. It creates a
+path into technical work that does not require a person to risk three to six
+years of their life, or a large debt load, before they are allowed to prove
+competence on real work. The entry point is not a broad credential. The entry
+point is a narrow lane, a supervisor, an AI learning layer, and an artifact that
+can be inspected.</p>
+<p>AI can expand the population capable of doing white-collar technical work if
+organizations redesign work around narrow lanes, expert review, and readable,
+repeatable, reliable artifacts. The institutions that win with AI will not be
+the ones that fire every junior worker and wait for a handful of expensive
+generalists to automate everything. They will be the ones that learn how to
+develop junior specialists faster than their competitors can hire senior
+ones. That possibility aligns with Autor&rsquo;s argument that AI can rebuild parts of
+the middle-skill labor market when deployed as expertise-amplifying
+infrastructure rather than pure automation
+(<a href="https://doi.org/10.3386/w32140">Autor, 2024</a>).</p>
+<p>Human Swarm Mode is an operating model for rapid applied research and
+engineering in which a small number of true experts direct larger teams of
+AI-augmented niche learners. Each learner owns one narrow problem lane. AI
+compresses the learning loop. Senior experts preserve architecture, correctness,
+taste, and standards of evidence.</p>
+<p>It is also a way to build accelerators for AI that are powered by human beings.
+The claim is not that people should become slower accessories to model output.
+The claim is that humans can learn faster than AI, and make better decisions
+than AI, when they are given long enough windows, narrow enough lanes, and
+disciplined evidence loops.</p>
+<p>AI is powerful at generating options, compressing context, explaining concepts,
+drafting artifacts, simulating approaches, and comparing visible tradeoffs. It
+is much weaker at priority. Priority depends on what matters now, what failure
+would be expensive, what uncertainty blocks the system, which anomaly deserves
+escalation, and which technically interesting path is actually a distraction.
+Swarm SMEs fill that gap by acting as priority sensors inside narrow lanes. A
+swarm operator is not merely a junior helper: they learn enough of that lane to
+distinguish signal from noise, decide which artifacts are worth expert
+attention, and escalate uncertainty before it becomes hidden risk. This makes
+the model pro-expert rather than anti-expert, because the purpose is to reduce
+the bottleneck around scarce expert judgment rather than weaken the authority of
+that judgment.</p>
+<p>This is not a universal model. Some work requires deep theoretical invention,
+licensed professional responsibility, long-duration tacit apprenticeship, or
+direct expert execution. Human Swarm Mode applies best where work can be
+decomposed into bounded lanes, reviewed through artifacts, and integrated by
+senior people who understand the larger system.</p>
+<p>The point is not that degrees are worthless. The point is that credential
+filtering is too slow and too lossy in domains where the bottleneck is not
+abstract genius but disciplined problem-solving at scale.</p>
+<h2 id="the-opposite-of-white-collar-collapse">The Opposite of White-Collar Collapse</h2>
+<p>Most AI labor commentary assumes a substitution model: AI performs knowledge
+work, so fewer knowledge workers are needed. That will be true for some narrow
+classes of work, especially work that was already procedural, low-context, and
+weakly reviewed.</p>
+<p>But technical work is not only task execution. It is learning, judgment,
+translation, decomposition, documentation, testing, failure analysis, tooling,
+and coordination. AI reduces the cost of many of those activities. When the cost
+of technical apprenticeship falls, the rational response is not always fewer
+people. In many domains, the better response is more disciplined parallel
+specialization.</p>
+<p>A team of four specialized operators, each owning a narrow lane with strong
+artifact discipline and expert review, may outperform one expensive generalist
+trying to cover the entire system alone. The advantage does not come from lower
+wages alone. It comes from parallelism, narrower context, faster learning loops,
+and work products that can be inspected by someone else.</p>
+<p>The winning AI-native organization is not the one paying the largest premium for
+people who can glue models into loops. It is the one that decomposes work well
+enough that many operators can become useful specialists while senior experts
+preserve architecture, standards, and correctness. In that environment, AI does
+not merely automate existing labor; it changes how labor should be shaped,
+supervised, and reviewed.</p>
+<p>This is why the future of entry-level technical work should not be limited to
+asking people to spend three to six years trying to become broadly ready before
+they are permitted to become narrowly useful. The better model is AI-native
+apprenticeship: supervised real work, bounded lanes, fast study loops, explicit
+artifacts, and review by people who already understand the system.</p>
+<p>This is not merely speculative. Brynjolfsson, Li, and Raymond found that a
+generative AI assistant increased productivity in a real customer-support
+setting, with the largest gains among less-experienced and lower-skilled
+workers. The relevant lesson for Human Swarm Mode is not that every worker
+becomes an expert overnight. It is that AI can compress the ramp from novice to
+useful contributor when the work is bounded and feedback is available
+(<a href="https://doi.org/10.1093/qje/qjae044">Brynjolfsson, Li, and Raymond, 2025</a>).</p>
+<p>Autor frames the larger labor-market version of the same possibility: AI may
+help restore middle-skill work if it allows more workers to perform
+judgment-intensive tasks that previously required scarcer expert labor
+(<a href="https://doi.org/10.3386/w32140">Autor, 2024</a>).</p>
+<h2 id="credential-bottlenecks-in-applied-research">Credential Bottlenecks in Applied Research</h2>
+<p>Advanced research organizations often treat credentials as a proxy for
+capability. A role is marked as requiring a master&rsquo;s degree, a PhD, or years of
+field-specific experience. This filtering system is administratively convenient,
+but it creates three structural problems.</p>
+<p>It also asks many capable people to make an enormous private bet before they
+are allowed to demonstrate public usefulness. A person may spend years, and in
+some cases tens of thousands of dollars or more, trying to qualify for an
+entry-level role that later asks them to perform only a narrow slice of the
+domain. Human Swarm Mode does not eliminate education. It moves some early
+career learning back into supervised work.</p>
+<p>First, it confuses certification with learning capacity. Many applied research
+tasks do not require a worker to already possess the whole field. They require a
+worker to understand one narrow subsystem well enough to measure it, test it,
+improve it, and communicate results.</p>
+<p>Second, it overconcentrates work on senior experts. Highly trained experts
+spend too much time on tasks that could be delegated if the organization had a
+stronger method for developing local competence: literature review,
+experiment logging, simulation scaffolds, test fixtures, vendor comparisons,
+failure-mode catalogs, calibration notes, and documentation.</p>
+<p>Third, it slows industrial response. A country or company trying to build a new
+technical capability cannot wait ten to fifteen years for a fully credentialed
+workforce to emerge before beginning serious work. The workforce has to be built
+while the work is happening.</p>
+<p>AI changes the math. It makes just-in-time technical learning practical at a
+level that was not previously possible. A motivated generalist can now ask for
+explanations, derive reading paths, generate simulations, compare papers,
+translate unfamiliar notation, inspect assumptions, produce test plans, and
+build tooling around a narrow technical problem.</p>
+<p>This does not mean credentials stop mattering. It means organizations should
+distinguish between work that requires full-field theoretical mastery and work
+that requires bounded, reviewable competence. Human Swarm Mode is aimed at the
+second category.</p>
+<p>The goal is not to turn every entry-level worker into a philosopher-scholar
+before they touch production reality. The goal is to create narrow, inspectable
+competence quickly, then compound it into deeper expertise over time, with the
+senior expert acting as a force multiplier rather than the only person allowed
+to advance the work.</p>
+<h2 id="the-core-model">The Core Model</h2>
+<p>Human Swarm Mode is based on a simple claim:</p>
+<blockquote>
+<p>A small number of true experts, directing a larger group of AI-augmented niche
+learners, can outperform a traditionally staffed team of credentialed
+generalists on many applied research and engineering problems.</p>
+</blockquote>
+<p>The model does not require every participant to understand the entire domain
+before contributing. It requires each participant to develop deep, narrow,
+evidence-backed competence in one problem lane, with that competence exposed
+through artifacts that can be reviewed by someone who understands the larger
+system.</p>
+<p>A semiconductor equipment program, for example, contains thousands of lanes:
+vacuum integrity, thermal drift, vibration isolation, precision stages,
+contamination control, optics handling, metrology repeatability, cleaning
+processes, plasma behavior, resist chemistry, tool calibration, supply-chain QA,
+field maintenance, simulation pipelines, control software, and manufacturing
+documentation.</p>
+<p>No single operator needs to become a lithography scientist. One operator can
+become the person who knows a specific vacuum subsystem. Another can become the
+person who knows contamination failures in a specific handling process. Another
+can own test fixture reproducibility. Another can own calibration drift reports.</p>
+<p>This distinction matters. Many domains described as requiring domain experts do
+not require every worker in every lane to arrive as a domain expert. They
+require workers who can learn a bounded slice of the domain, produce
+measurements and artifacts, and escalate uncertainty correctly. PhD-level
+experts remain essential, but their highest-leverage role is often validation:
+determining whether the data means what the operator thinks it means, whether
+the assumptions are valid, and whether the result fits the physics, chemistry,
+biology, or system constraints of the larger domain. Engineers remain essential
+for design and integration. The swarm expands execution and learning capacity
+around them while the senior expert continues to own architecture, validity
+boundaries, and scientific judgment.</p>
+<p>AI expands the search space by making more explanations, drafts, comparisons,
+and candidate paths available. Swarm SMEs prioritize inside that expanded search
+space, engineers integrate the work, and experts validate the highest-leverage
+outputs.</p>
+<p>The comparison is not one non-credentialed worker versus one PhD. The comparison
+is one PhD working alone versus one PhD directing twenty AI-augmented niche
+learners through a disciplined artifact pipeline.</p>
+<p>The economic logic is not new: specialization increases productivity, but only
+when the gains from narrower expertise exceed the coordination costs of dividing
+the work. AI changes that tradeoff by lowering the cost of explanation,
+translation, documentation, and review
+(<a href="https://academic.oup.com/qje/article/107/4/1137/1846913">Becker and Murphy, 1992</a>).</p>
+<table>
+<thead>
+<tr>
+<th>Credential-first model</th>
+<th>Human Swarm Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Expert executes</td>
+<td>Expert directs</td>
+</tr>
+<tr>
+<td>Broad readiness first</td>
+<td>Narrow lane readiness first</td>
+</tr>
+<tr>
+<td>Resume filter</td>
+<td>Artifact trial</td>
+</tr>
+<tr>
+<td>AI as replacement</td>
+<td>AI as work infrastructure</td>
+</tr>
+<tr>
+<td>Output as task</td>
+<td>Output as reviewable artifact</td>
+</tr>
+</tbody>
+</table>
+<h2 id="operating-layers">Operating Layers</h2>
+<p>Human Swarm Mode has five operating layers: expert command, problem queues,
+niche learners supported by AI, reviewable artifacts, review and culling, and
+eventual lane expertise.</p>
+<h3 id="expert-command">Expert Command</h3>
+<p>At the center are one or more senior experts, engineers, or domain experts.
+Their job is not to do every task. Their job is to define the problem frontier,
+decompose it into queues, establish standards of evidence, review results,
+reject bad reasoning, and decide which paths deserve more investment.
+In practical terms, they own taste, direction, and correctness.</p>
+<p>Expert command is necessary because AI capability is uneven across tasks.
+Dell&rsquo;Acqua et al. describe this as a jagged technological frontier: AI can
+improve performance on some knowledge-work tasks while degrading it on others.
+The expert&rsquo;s job is to know where AI can be trusted, where it must be
+constrained, and where human judgment must remain primary
+(<a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=64700">Dell&rsquo;Acqua et al., 2023</a>).</p>
+<h3 id="problem-queues">Problem Queues</h3>
+<p>The work is broken into small, inspectable problem units. Each unit has a clear
+question, expected artifact, acceptance condition, and review path.</p>
+<p>Examples:</p>
+<ul>
+<li>Explain why this subsystem drifts under temperature change.</li>
+<li>Build a test fixture for this repeated failure mode.</li>
+<li>Summarize the five most relevant papers on this process constraint.</li>
+<li>Compare three commercially available components against this tolerance
+  requirement.</li>
+<li>Reproduce this simulation result and identify parameter sensitivity.</li>
+<li>Create a calibration checklist that a technician can follow without
+  improvising.</li>
+<li>Document every observed failure mode in this process lane.</li>
+</ul>
+<p>The unit of work is not &ldquo;become an expert in lithography.&rdquo; The unit is a
+bounded uncertainty that one operator can own until it is resolved, explicitly
+bounded, or escalated to someone with broader authority.</p>
+<h3 id="niche-learners">Niche Learners</h3>
+<p>The swarm consists of smart people selected for learning speed, curiosity,
+discipline, mechanical intuition, math tolerance, documentation habits, and
+willingness to be corrected.</p>
+<p>They do not need traditional credentials for every lane. They need a narrow
+target, good tools, fast feedback, and clear evidence standards.</p>
+<p>A strong swarm may include technical-school graduates, machinists, software
+generalists, physics undergraduates, self-taught engineers, manufacturing
+workers, military technicians, hobbyists, failed startup builders, and people
+who were filtered out by school but not by reality.</p>
+<p>Selection should therefore emphasize whether a person can learn, measure,
+document, and improve in a narrow lane, not whether they already carry the
+prestige markers of a finished expert.</p>
+<h3 id="ai-as-work-infrastructure">AI as Work Infrastructure</h3>
+<p>AI supports every operator as a personal tutor and productivity layer. It
+explains unfamiliar concepts, generates study paths, summarizes literature,
+drafts experiments, builds small tools, checks assumptions, creates
+documentation, and helps translate between disciplines.</p>
+<p>AI is not treated as the source of truth. It is treated as acceleration
+infrastructure. Claims still require evidence. Results still require review.
+Measurements still beat generated prose.</p>
+<p>AI assistance should therefore be treated as infrastructure, not authority.
+Dell&rsquo;Acqua et al. show that AI can produce large gains inside its capability
+frontier while harming performance outside it. Human Swarm Mode treats that as
+a design constraint: operators may use AI aggressively for explanation,
+drafting, simulation, and comparison, but claims must still terminate in
+evidence (<a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=64700">Dell&rsquo;Acqua et al., 2023</a>).</p>
+<p>Peng et al.&rsquo;s controlled GitHub Copilot experiment similarly supports the narrow
+claim that AI can accelerate bounded software tasks, while leaving open the
+broader question of long-term competence and maintainability
+(<a href="https://arxiv.org/abs/2302.06590">Peng et al., 2023</a>).</p>
+<h3 id="artifact-based-review">Artifact-Based Review</h3>
+<p>Every work unit produces an artifact that can be reviewed without replaying the
+entire thought process. The artifact may be a memo, simulation, dataset, test
+fixture, measurement log, failure-mode catalog, annotated bibliography,
+reproducibility script, or decision record.</p>
+<p>Artifact discipline is what prevents swarm mode from becoming chaos. The team
+does not accept confidence, fluency, or vibes as substitutes for evidence; it
+requires artifacts that can be inspected, challenged, and reproduced.</p>
+<p>The senior expert does not have to evaluate an operator&rsquo;s worth in the abstract.
+They can ask a narrower and more useful question: does this artifact prove what
+it claims, and can another person verify it?</p>
+<h2 id="the-three-rs-readable-repeatable-reliable">The Three Rs: Readable, Repeatable, Reliable</h2>
+<p>Human Swarm Mode is only safe if outputs satisfy the three Rs: readable,
+repeatable, and reliable.</p>
+<p><strong>Readable</strong> means an artifact can be understood by someone outside the original
+task. Notes, assumptions, sources, measurements, prompts, scripts, and claims
+must be legible to another operator, reviewer, or future version of the team.</p>
+<p><strong>Repeatable</strong> means the result can be reproduced or checked from the recorded
+path. Another person should be able to rerun the test, follow the reasoning,
+regenerate the output, or validate the claim against the evidence trail.</p>
+<p><strong>Reliable</strong> means the process continues to produce useful work when people
+rotate, assumptions are challenged, tools fail, or adversarial pressure appears.
+The system cannot depend on heroics, hidden knowledge, credential mystique, or a
+single overloaded expert.</p>
+<p>These standards matter because technical systems are not judged by internal
+intentions. Threat actors, broken machines, production failures, manufacturing
+drift, and market pressure do not care about credentials. They care whether the
+system has brittle seams.</p>
+<p>The three Rs also protect the expert layer from becoming the hidden bottleneck.
+If AI increases output without making that output easier to inspect, the burden
+simply moves to senior reviewers. Human Swarm Mode avoids that failure by
+requiring every lane to produce artifacts that are readable enough to review,
+repeatable enough to check, and reliable enough to survive handoff.</p>
+<h2 id="accelerated-confusion-and-culling">Accelerated Confusion and Culling</h2>
+<p>Human Swarm Mode does not pretend that every new operator will become useful or
+that every AI-assisted artifact will be good. In fact, the model assumes the
+opposite.</p>
+<p>Many people will begin confused. Many paths will be wrong. Many artifacts will
+fail review. Some learners will not improve in a given lane. Some tasks will be
+decomposed poorly and need to be rewritten. AI will generate plausible nonsense.
+The system works not because confusion disappears, but because confusion becomes
+cheap to surface, review, cull, and learn from.</p>
+<p>Traditional institutions try to avoid confusion by filtering people before they
+enter the work. Human Swarm Mode accepts that confusion is part of technical
+apprenticeship, then builds a discipline around making it visible.</p>
+<p>Bad artifacts should be rejected. Weak claims should be corrected. Operators who
+are not improving should be moved to different lanes or out of the program.
+Compassion does not require pretending every attempt is good. It requires giving
+more people a real attempt, faster feedback, and a path upward when the evidence
+supports it.</p>
+<p>Culling should mean honest lane reassignment or program exit when the evidence
+shows that a lane is not working. It should not become humiliation, churn, or
+disposable labor.</p>
+<p>This is how latent technical talent becomes discoverable. The organization does
+not need to know in advance which nontraditional candidate will become a strong
+subsystem owner. It needs a mechanism for giving many candidates narrow,
+reviewable attempts and promoting the ones who repeatedly produce readable,
+repeatable, reliable work.</p>
+<p>Accelerated confusion is dangerous when it is hidden, because fluent but wrong
+work can accumulate until it becomes expensive to unwind. It becomes useful only
+when the organization converts it into selection pressure, training data, and
+better artifacts.</p>
+<p>This is the practical lesson of the jagged frontier. AI can make weak work look
+fluent, and it can improve or degrade performance depending on the task. A swarm
+model is safe only when confusion is surfaced through artifacts, corrected
+through review, and culled when it does not improve
+(<a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=64700">Dell&rsquo;Acqua et al., 2023</a>).</p>
+<h2 id="accelerated-niche-expertise">Accelerated Niche Expertise</h2>
+<p>The central product of Human Swarm Mode is accelerated niche expertise.</p>
+<p>Traditional education attempts to produce broad field readiness before serious
+contribution. Swarm mode produces narrow contribution readiness first, then
+expands competence outward as needed.</p>
+<p>This inversion matters. Many applied research bottlenecks are narrow. The
+organization does not need every contributor to understand the full stack. It
+needs someone to own the contamination history of one process, the tolerance
+behavior of one assembly, the failure profile of one actuator, the API surface
+of one subsystem, or the literature around one material constraint.</p>
+<p>Niche expertise becomes valid when it is:</p>
+<ul>
+<li>bounded;</li>
+<li>evidence-backed;</li>
+<li>reviewable;</li>
+<li>integrated into the larger architecture;</li>
+<li>and updated when new evidence arrives.</li>
+</ul>
+<p>Language gaps are less decisive than they used to be. AI can translate papers,
+normalize terminology, help produce English-language artifacts from non-English
+notes, and help workers compare concepts across technical cultures. The
+important question becomes whether the artifact is true, useful, and
+reproducible.</p>
+<p>Evidence from deployed and experimental AI systems supports the narrow version
+of this claim. Brynjolfsson, Li, and Raymond found that AI assistance
+disproportionately helped less-experienced workers in a real production
+environment. Peng et al. found that developers using GitHub Copilot completed a
+bounded programming task substantially faster than those without it. Human Swarm
+Mode applies the same idea organizationally: compress the ramp into a narrow
+lane, then use expert review to prevent speed from masquerading as mastery
+(<a href="https://doi.org/10.1093/qje/qjae044">Brynjolfsson, Li, and Raymond, 2025</a>;
+<a href="https://arxiv.org/abs/2302.06590">Peng et al., 2023</a>).</p>
+<p>This expands the possible labor pool. People who were illegible to credential
+systems can become valuable if their lane is narrow enough, their feedback loop
+is strong enough, and their outputs are held to real standards.</p>
+<h2 id="the-economics-of-expert-leverage">The Economics of Expert Leverage</h2>
+<p>Credential-first teams have advantages: deep theoretical grounding, field
+identity, academic discipline, and recognized expertise. Human Swarm Mode does
+not replace those advantages in all contexts.</p>
+<p>But credential-first teams are often slow, expensive, and overloaded. They are
+built around scarce experts. Swarm mode is built around expert leverage.</p>
+<p>One excellent researcher can directly supervise only a small amount of work if
+every task depends on their personal execution. That same researcher can
+supervise far more work if each task is decomposed, AI-assisted,
+artifact-producing, and reviewable.</p>
+<p>When learning support, translation, documentation, code scaffolding, literature
+search, and simulation assistance become cheaper, organizations should not
+automatically buy fewer people. In many domains, they should buy more disciplined
+parallel specialization.</p>
+<p>This has a mobility implication. AI can make it possible to discover and train
+latent technical talent at industrial scale. A person without the traditional
+background may become a narrow subject-matter expert, earn more, pay more taxes,
+and pull themselves and their family into a different economic class.</p>
+<p>That outcome is not automatic. Without discipline, the same tools produce noise.
+With discipline, they can create a new technical middle class: people who are
+not full-stack scientists, but who own real technical lanes and produce valuable
+work.</p>
+<p>The limiting factor is coordination. Specialization only works when the
+organization can define lanes, move knowledge between them, and integrate
+outputs. Becker and Murphy&rsquo;s account of division of labor and coordination
+costs is the useful baseline: Human Swarm Mode is a claim that AI lowers several
+of those coordination costs enough to make finer-grained white-collar
+specialization practical
+(<a href="https://academic.oup.com/qje/article/107/4/1137/1846913">Becker and Murphy, 1992</a>).</p>
+<h2 id="related-concepts">Related Concepts</h2>
+<p>Human Swarm Mode is not a new name for any single existing practice. It combines
+pieces that already work in other contexts:</p>
+<ul>
+<li><strong>AI-native apprenticeship</strong>: novices learn through bounded participation,
+  AI-assisted study, real artifacts, and expert correction.</li>
+<li><strong>Manufacturing cells</strong>: work is organized into specialized lanes with visible
+  handoffs and local ownership.</li>
+<li><strong>OODA loops</strong>: operators repeatedly observe, orient, decide, and act, with
+  short feedback cycles.</li>
+<li><strong>Literate programming</strong>: the artifact explains the work, not just the final
+  output.</li>
+<li><strong>High-reliability organizations</strong>: complex work is stabilized through
+  discipline, review, redundancy, and attention to failure modes.</li>
+</ul>
+<h2 id="where-the-model-works-best">Where the Model Works Best</h2>
+<p>Human Swarm Mode is strongest in domains with many decomposable applied
+problems.</p>
+<p>Examples include:</p>
+<ul>
+<li>semiconductor equipment;</li>
+<li>advanced manufacturing;</li>
+<li>industrial automation;</li>
+<li>cybersecurity research;</li>
+<li>static analysis;</li>
+<li>software verification;</li>
+<li>robotics;</li>
+<li>materials process development;</li>
+<li>supply-chain qualification;</li>
+<li>medical device engineering;</li>
+<li>energy systems;</li>
+<li>aerospace manufacturing;</li>
+<li>and large-scale technical documentation.</li>
+</ul>
+<p>The model is especially strong where the problem is not &ldquo;invent a new theory
+from nothing&rdquo; but &ldquo;make a complex system behave reliably under constraints.&rdquo;</p>
+<p>That kind of work rewards measurement, persistence, debugging, documentation,
+and iteration. Those are trainable.</p>
+<p>Security programs are one example, not the whole model. Most security teams
+fail to scale because the security staff remains the bottleneck for every
+review, exception, threat model, and code-level judgment. Human Swarm Mode turns
+some security knowledge into narrow lanes that developers and junior operators
+can learn, own, document, and enforce with AI support and expert review. One
+lane might focus on IDOR review. Another might own dependency triage. Another
+might turn repeated findings into checklists, tests, or static analysis rules.
+The security expert still owns standards and escalation, but the organization
+stops treating security knowledge as a single overloaded queue.</p>
+<p>This is consistent with existing DevSecOps research without making the paper a
+DevSecOps paper. Rajapakse et al. identify shift-left security, continuous
+assessment, automation, and developer-centered tooling as recurring needs, while
+their later work on collaborative application security testing identifies
+unclear role definitions, shared goals, ownership, and collaboration support as
+major barriers
+(<a href="https://arxiv.org/abs/2103.08266">Rajapakse et al., 2021</a>;
+<a href="https://arxiv.org/abs/2211.06953">Rajapakse, Zahedi, and Babar, 2022</a>).</p>
+<p>For semiconductor equipment, the practical path is not to pretend every swarm
+operator can become an elite physicist. It is to separate learning, design, and
+validation. Operators can learn narrow subsystems well enough to produce
+disciplined measurements, failure catalogs, calibration notes, supplier
+comparisons, and reproducibility artifacts. Engineers design the mechanisms,
+fixtures, controls, and integration paths. PhD-level experts validate the data,
+assumptions, models, and physical interpretation. The result is not a
+replacement for elite expertise. It is a larger machine around elite expertise.</p>
+<p>The result is not instant parity with the world&rsquo;s best firms. It is a faster
+climb up the learning curve.</p>
+<p>In strategic industries, climbing faster may matter more than starting perfect.</p>
+<h2 id="where-the-model-breaks">Where the Model Breaks</h2>
+<p>Swarm mode fails when it confuses accelerated learning with expertise.</p>
+<p>It also fails when there is no senior review, no artifact discipline, no
+measurement, no reproducibility, no source control, no experimental log, no
+stable problem queue, or no mechanism for killing bad ideas.</p>
+<p>The most common failure modes are:</p>
+<ul>
+<li>AI hallucinations accepted as truth;</li>
+<li>shallow learners overstating confidence;</li>
+<li>senior experts too busy to review;</li>
+<li>fragmented notes that never become shared knowledge;</li>
+<li>duplicated work;</li>
+<li>weak problem decomposition;</li>
+<li>no acceptance criteria;</li>
+<li>prestige politics replacing evidence;</li>
+<li>and credential resentment turning into anti-expertise culture.</li>
+</ul>
+<p>The last failure matters. Human Swarm Mode is not an excuse for resentment
+against experts. It is a way to make expert judgment scale by giving experts
+better artifacts, clearer escalation paths, and more disciplined operators
+working inside bounded lanes.</p>
+<h2 id="implementation-blueprint">Implementation Blueprint</h2>
+<p>A Human Swarm Mode program should start small.</p>
+<p>The first pilot should be scoped to four to eight operators, one expert owner,
+and a single measurable bottleneck. Select one technical frontier with
+measurable constraints. Then appoint the expert owner, break the work into
+narrow queues, and assign each operator to one lane. Require every task to
+produce a reviewable artifact. Use AI aggressively for learning and production,
+but require evidence for claims.</p>
+<p>Each lane should maintain:</p>
+<ul>
+<li>a glossary;</li>
+<li>a reading map;</li>
+<li>a known-unknowns list;</li>
+<li>an experiment log;</li>
+<li>a failure-mode catalog;</li>
+<li>a tool or script repository;</li>
+<li>a decision record;</li>
+<li>and a weekly review artifact.</li>
+</ul>
+<p>Selection should be practical. Give candidates a narrow unfamiliar problem, AI
+access, a few hours, and a required artifact. Evaluate the artifact. Did they
+understand the task? Did they find good sources? Did they distinguish evidence
+from speculation? Did they document uncertainty? Did they ask better questions
+by the end than at the beginning?</p>
+<p>That test is closer to the real job than a resume filter.</p>
+<p>Promotion comes from demonstrated judgment and artifact quality, not formal
+background. As lanes mature, the best operators can become lane leads who train
+new operators, preserve local knowledge, and reduce the amount of direct
+supervision required from the expert owner.</p>
+<h2 id="related-work">Related Work</h2>
+<p>Human Swarm Mode sits at the intersection of AI-augmented labor,
+specialization, knowledge-work productivity, and technical operations.</p>
+<p>The labor-market argument is closest to Autor&rsquo;s claim that AI could help rebuild
+middle-skill work by enabling more workers to perform judgment-intensive tasks
+previously restricted to scarce experts
+(<a href="https://doi.org/10.3386/w32140">Autor, 2024</a>). The workplace-productivity
+evidence is consistent with that direction: Brynjolfsson, Li, and Raymond found
+that generative AI assistance increased productivity in a real customer-support
+environment, with the largest gains among less-experienced and lower-skilled
+workers
+(<a href="https://doi.org/10.1093/qje/qjae044">Brynjolfsson, Li, and Raymond, 2025</a>).</p>
+<p>The model also depends on task selection and expert review. Dell&rsquo;Acqua et al.
+describe AI&rsquo;s uneven task boundary as a jagged technological frontier, where AI
+can improve performance on some tasks and degrade it on others. Human Swarm Mode
+treats that unevenness as a reason for expert command, narrow lanes, and
+evidence-based review rather than as a reason to reject AI assistance outright
+(<a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=64700">Dell&rsquo;Acqua et al., 2023</a>).</p>
+<p>Software-specific evidence is narrower but useful. Peng et al. found that
+developers with access to GitHub Copilot completed a bounded programming task
+faster than developers without it. Human Swarm Mode uses that result
+conservatively: AI can accelerate bounded technical work when the task is narrow
+and the output can be checked
+(<a href="https://arxiv.org/abs/2302.06590">Peng et al., 2023</a>).</p>
+<p>The deeper economic baseline is division of labor. Becker and Murphy argue that
+specialization is limited by coordination costs and the cost of acquiring and
+combining knowledge. Human Swarm Mode is a claim about that tradeoff in an
+AI-native organization: AI lowers some explanation, translation, documentation,
+and review costs enough to make finer-grained knowledge-work lanes practical
+(<a href="https://academic.oup.com/qje/article/107/4/1137/1846913">Becker and Murphy, 1992</a>).</p>
+<p>Application security is one concrete domain where the model fits. DevSecOps
+research identifies shift-left security, continuous assessment, automation,
+developer-centered tooling, and unclear ownership as recurring challenges
+(<a href="https://arxiv.org/abs/2103.08266">Rajapakse et al., 2021</a>;
+<a href="https://arxiv.org/abs/2211.06953">Rajapakse, Zahedi, and Babar, 2022</a>).</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>The next major productivity jump in research and engineering will not come from
+AI replacing experts. It will come from AI making nontraditional experts faster
+to create, easier to direct, and safer to review.</p>
+<p>Human Swarm Mode treats intelligence as an organized system rather than an
+individual credential. It combines expert command, narrow problem queues,
+AI-accelerated learning, artifact-based review, culling, and rapid iteration
+into a single operating model.</p>
+<p>The result is accelerated niche expertise: people outside traditional credential
+pipelines become deeply useful in one technical lane, then compound that
+competence through shared artifacts, lane ownership, and expert review.</p>
+<p>This is a different response to white-collar automation than simply reducing
+headcount. It is a path toward more technical workers, more subject-matter
+experts, more industrial capacity, and more upward mobility, provided that the
+organization preserves expert judgment and makes every lane inspectable.</p>
+<p>The claim is not that AI removes expertise. The claim is that, under the right
+operating model, AI lowers the cost of creating bounded, inspectable competence
+around expertise.</p>
+<p>Institutions that learn to build and review that competence will move faster
+than institutions still waiting for the perfect resume.</p>
+<h2 id="references">References</h2>
+<p>Autor, D. H. (2024). <em>Applying AI to Rebuild Middle Class Jobs</em>. NBER Working
+Paper No. 32140. National Bureau of Economic Research.
+https://doi.org/10.3386/w32140</p>
+<p>Becker, G. S., &amp; Murphy, K. M. (1992). The division of labor, coordination
+costs, and knowledge. <em>The Quarterly Journal of Economics</em>, 107(4), 1137-1160.
+https://doi.org/10.2307/2118383</p>
+<p>Brynjolfsson, E., Li, D., &amp; Raymond, L. R. (2025). Generative AI at work. <em>The
+Quarterly Journal of Economics</em>, 140(2), 889-942.
+https://doi.org/10.1093/qje/qjae044</p>
+<p>Dell&rsquo;Acqua, F., McFowland III, E., Mollick, E. R., Lifshitz-Assaf, H., Kellogg,
+K. C., Rajendran, S., Krayer, L., Candelon, F., &amp; Lakhani, K. R. (2023).
+<em>Navigating the Jagged Technological Frontier: Field Experimental Evidence of
+the Effects of Artificial Intelligence on Knowledge Worker Productivity and
+Quality</em>. Harvard Business School Working Paper No. 24-013.
+https://www.hbs.edu/faculty/Pages/item.aspx?num=64700</p>
+<p>Peng, S., Kalliamvakou, E., Cihon, P., &amp; Demirer, M. (2023). <em>The Impact of AI
+on Developer Productivity: Evidence from GitHub Copilot</em>. arXiv:2302.06590.
+https://arxiv.org/abs/2302.06590</p>
+<p>Rajapakse, R. N., Zahedi, M., Babar, M. A., &amp; Shen, H. (2021). Challenges and
+solutions when adopting DevSecOps: A systematic review. arXiv:2103.08266.
+https://arxiv.org/abs/2103.08266</p>
+<p>Rajapakse, R. N., Zahedi, M., &amp; Babar, M. A. (2022). <em>Collaborative Application
+Security Testing for DevSecOps: An Empirical Analysis of Challenges, Best
+Practices and Tool Support</em>. arXiv:2211.06953.
+https://arxiv.org/abs/2211.06953</p>
+    </div>
+  </article>
+</main>
+  </body>
+</html>

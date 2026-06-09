@@ -1,0 +1,13 @@
+title: Policy-Carrying Fields for Application-Specific Security Tooling
+slug: policy-carrying-fields
+published_at: 2026-06-08T00:00:00-07:00
+status: published
+tags:
+  - proof-driven-appsec
+  - secure-codegen
+  - authorization
+  - evidence
+  - sast
+summary: >
+  An argument for making security intent concrete on ordinary ORM fields, then
+  using generated metadata and static analysis to enforce local invariants.
